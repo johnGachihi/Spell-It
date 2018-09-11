@@ -1,15 +1,87 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
     <title>Add Content</title>
     <link rel="stylesheet" href="/dependencies/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/css/styles.css">
+    <script src="/dependencies/jquery-3.3.1.js"></script>
 </head>
 <body>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#registerAdminModal">
+        Register User
+    </button>
 
+    <!--Modal-->
+    <div class="modal fade" id="registerAdminModal" tabindex="-1" role="dialog" aria-labelledby="registerAdminModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="registerAdminModalTitle">Register Admin</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="regForm" th:object="${newAdmin}">
+                        <div class="form-group">
+                            <label for="emailInputInRegModal">Insert Email</label>
+                            <input type="email" name="email" th:field="*{email}" class="form-control" id="emailInputInRegModal" aria-describedby="emailHelp" placeholder="Enter email">
+                            <small id="emailHelp" class="form-text text-muted">An email will be sent to the provided address for verification</small>
+                        </div>
+
+                        <div class="form-group" style="display: none;">
+                            <label for="staticPassword">Temporary password</label>
+                            <input type="text" readonly class="form-control-plaintext" id="staticPassword">
+                        </div>
+                        <button id="regFormSubmit" type="submit" class="btn btn-primary submit-btn">Submit</button>
+                    </form>
+                </div>
+                <!--Spinner-->
+                <img class="spinner" src="/images/double-slit-ring-spinner.gif" style="display: none;">
+                <div >
+                </div>
+            </div>
+        </div>
+    </div>
 
 <script src="/dependencies/popper.min.js"></script>
 <script src="/dependencies/bootstrap.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(() => {
+
+        var csrf_token = $("meta[name='_csrf']").attr("content");
+        var csrf_header = $("meta[name='_csrf_header']").attr("content");
+
+        $(document).ajaxSend((e, xhr, settings) => {
+            console.log("AjaxSend at work!");
+            xhr.setRequestHeader(csrf_header, csrf_token);
+        });
+
+        $("#regFormSubmit").on("click", (e) => {
+            e.preventDefault();
+
+            $("#regForm").find("input, button").attr("disabled", "disabled");
+            $(".spinner").slideDown();
+
+            var regData = $("#regForm").serialize();
+
+            $.ajax({
+                type: "post",
+                data: regData,
+                url: "/register-admin",
+                async: false,
+                // headers: {header, csrf_token},
+                dataType: "json"
+            });
+
+            $("#regForm").find("input, button").removeAttr("disabled");
+            $(".spinner").slideUp();
+        });
+
+    });
+</script>
 </body>
 </html>
