@@ -28,6 +28,7 @@ public class MyUserDetailsService implements UserDetailsService {
         return User.withUsername(admin.getUsername())
                 .password(admin.getPassword())
                 .roles("ADMIN")
+                .disabled(false)
                 .build();
     }
 }

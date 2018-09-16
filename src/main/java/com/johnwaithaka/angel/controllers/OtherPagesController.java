@@ -14,4 +14,9 @@ public class OtherPagesController {
         model.addAttribute("newAdmin", adminDto);
         return "add-content";
     }
+
+    @RequestMapping("/fragments")
+    public String getFrags(){
+        return "fragments.html";
+    }
 }

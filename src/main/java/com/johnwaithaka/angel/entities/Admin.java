@@ -13,6 +13,7 @@ public class Admin {
     private String id;
     private String username;
     private String password;
+    private boolean enabled;
 
     public Admin() {}
 
@@ -27,5 +28,9 @@ public class Admin {
 
     public String getPassword() {
         return password;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
     }
 }

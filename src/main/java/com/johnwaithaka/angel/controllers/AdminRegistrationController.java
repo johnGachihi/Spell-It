@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.validation.Valid;
@@ -15,11 +16,10 @@ import javax.validation.Valid;
 public class AdminRegistrationController {
 
     @RequestMapping(value = "/register-admin")
-    @ResponseStatus(value = HttpStatus.OK)
-    public void registerAdmin(@ModelAttribute("newAdmin") AdminDto adminDto){
+    @ResponseStatus(value = HttpStatus.OK) //Point of contention at @ModelAttribute
+    public void registerAdmin(@ModelAttribute("newAdmin") AdminDto adminDto, @RequestParam("email") String email){
         String tempPass = RandomStringUtils.random(8, true, true);
         adminDto.setPassword(tempPass);
 
-        System.out.println("Username: " + adminDto.getEmail() + " Password: " + adminDto.getPassword());
     }
 }

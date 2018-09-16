@@ -1,5 +1,6 @@
 package com.johnwaithaka.angel.config;
 
+import com.johnwaithaka.angel.auth.MyAuthenticationFailureHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -20,14 +22,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(authenticationProvider());
+        try{
+            auth.authenticationProvider(authenticationProvider());
+        } catch (Exception e){
+            System.out.println("Error Error Error Error!!!");
+            System.out.println(e.getMessage());
+        }
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.
             authorizeRequests()
-                .antMatchers("/login_here", "/login/**", "/dependencies/**", "/css/**").permitAll()
+                .antMatchers("/login_here", "/login/**", "/dependencies/**", "/css/**", "/js/**", "/fragments/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
             .formLogin()
@@ -35,6 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .failureUrl("/fail_login")
                 .loginProcessingUrl("/login_here")
                 .defaultSuccessUrl("/add-content")
+                .failureHandler(myAuthenticationFailureHandler())
                 .permitAll();
 
     }
@@ -51,6 +59,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public PasswordEncoder encoder(){
         return new BCryptPasswordEncoder(11);
+    }
+
+    @Bean
+    public AuthenticationFailureHandler myAuthenticationFailureHandler(){
+        return new MyAuthenticationFailureHandler();
     }
 }
 
