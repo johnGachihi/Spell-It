@@ -21,9 +21,10 @@ public class AddContentController {
             @RequestParam(value = "word") String word,
             @RequestParam(value = "phonetic")MultipartFile phonetic)
     {
-        System.out.println("Word inserted:" + word);
+        System.out.println("Word inserted: " + word);
         System.out.println("File name: " + phonetic.getOriginalFilename());
         System.out.println("Content type: " + phonetic.getContentType());
+        System.out.println();
     }
 
     @Bean

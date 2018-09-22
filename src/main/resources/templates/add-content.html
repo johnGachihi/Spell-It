@@ -8,17 +8,42 @@
     <link rel="stylesheet" href="/dependencies/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/css/styles.css">
     <script src="/dependencies/jquery-3.3.1.js"></script>
+    <link rel="stylesheet" href="/fontawesome-free/css/all.min.css">
+    <script type="text/javascript">
+        function onDropHandler(e) {
+            console.log("Items dropped");
+
+            e.preventDefault();
+
+            if(e.dataTransfer.items){
+                for(var i = 0; i < e.dataTransfer.items.length; i++){
+                    if(e.dataTransfer.items[i].kind === "file"){
+                        var file = e.dataTransfer.items[i].getAsFile();
+                        console.log(file.name);
+                    }
+                }
+            } else {
+                for(var i=0; i<e.dataTransfer.files.length; i++){
+                    console.log(e.dataTransfer.files[i].name);
+                }
+            }
+        }
+
+        function onDragOverHandler(e){
+            e.preventDefault();
+        }
+    </script>
 </head>
 <body>
     <nav th:replace="login.html :: header"></nav>
 
     <div class="container-fluid">
-        <span class="glyphicons glyphicons-volume-up"></span>
         <div class="row">
-            <nav class="col-md-2 d-none d-md-block bg-light sidebar py-2 mr-2">
+            <!--This fragment should be placed inside a row inside a container-fluid-->
+            <nav th:fragment="sideMenu" class="col-md-2 d-none d-md-block bg-light sidebar py-2 mr-2">
                 <div class="sidebar-sticky">
                     <ul class="nav flex-column">
-                        <li class="nav-item">
+                        <!--<li class="nav-item">
                             <a data-toggle="collapse" href="#settings-items" aria-expanded="false" aria-controls="settings-items">
                                 <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 54 54" style="enable-background:new 0 0 54 54;" xml:space="preserve">
@@ -87,6 +112,26 @@
                                     <a data-toggle="modal" href="#registerAdminModal">Register Admin</a>
                                 </li>
                             </ul>
+                        </li>-->
+                        <li th:each="menuItem: ${menuItems}" class="nav-item">
+                            <span th:switch="${#lists.size(menuItem.menuItems)}">
+                                <!--Edit the link-->
+                                <a th:case="'0'" th:href="@{#}" th:text="${menuItem.text}"></a>
+
+                                <span th:case="*">
+                                    <a class="dropdown-toggle" th:text="${menuItem.text}"
+                                       data-toggle="collapse" href="#sidebar-items"
+                                       aria-expanded="false" aria-controls="sidebar-items"
+                                    ></a>
+
+                                    <ul class="collapse list-group" id="sidebar-items">
+                                        <li th:each="menuSubItem: ${menuItem.menuItems}" class="list-group-item">
+                                            <a th:href="@{menuSubItem.link}" th:text="${menuSubItem.text}"></a>
+                                        </li>
+                                    </ul>
+                                </span>
+
+                            </span>
                         </li>
                     </ul>
 
@@ -175,47 +220,57 @@
                 </button>
             </div>
 -->
+            <div class="mainContent">
+                <div class="modal fade" id="registerAdminModal" tabindex="-1" role="dialog" aria-labelledby="registerAdminModalTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="registerAdminModalTitle">Register Admin</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="regForm">
+                                    <div class="form-group">
+                                        <label for="emailInputInRegModal">Insert Email</label>
+                                        <input type="email" name="email" class="form-control" id="emailInputInRegModal" aria-describedby="emailHelp" placeholder="Enter email">
+                                        <small id="emailHelp" class="form-text text-muted">An email will be sent to the provided address for verification</small>
+                                    </div>
 
-            <!--Modal-->
-            <div class="modal fade" id="registerAdminModal" tabindex="-1" role="dialog" aria-labelledby="registerAdminModalTitle" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="registerAdminModalTitle">Register Admin</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="regForm">
-                                <div class="form-group">
-                                    <label for="emailInputInRegModal">Insert Email</label>
-                                    <input type="email" name="email" class="form-control" id="emailInputInRegModal" aria-describedby="emailHelp" placeholder="Enter email">
-                                    <small id="emailHelp" class="form-text text-muted">An email will be sent to the provided address for verification</small>
-                                </div>
-
-                                <div class="form-group" style="display: none;">
-                                    <label for="staticPassword">Temporary password</label>
-                                    <input type="text" readonly class="form-control-plaintext" id="staticPassword">
-                                </div>
-                                <button id="regFormSubmit" type="submit" class="btn btn-primary submit-btn">Submit</button>
-                            </form>
-                        </div>
-                        <!--Spinner-->
-                        <img class="spinner" src="/images/double-slit-ring-spinner.gif" style="display: none;">
-                        <div >
+                                    <div class="form-group" style="display: none;">
+                                        <label for="staticPassword">Temporary password</label>
+                                        <input type="text" readonly class="form-control-plaintext" id="staticPassword">
+                                    </div>
+                                    <button id="regFormSubmit" type="submit" class="btn btn-primary submit-btn">Submit</button>
+                                </form>
+                            </div>
+                            <!--Spinner-->
+                            <img class="spinner" src="/images/double-slit-ring-spinner.gif" style="display: none;">
+                            <div >
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <div class="card w-50" style="height: 200px">
+                    <div style="height: 100%" ondrop="onDropHandler(event);" ondragover="onDragOverHandler(event)">
+                        <span>Drag file over</span>
+                    </div>
+                </div>
+
+
+                <form id="contentInsert" enctype="multipart/form-data" method="post">
+                    <input id="word" type="text" name="word">
+                    <input id="phonetic" type="file" name="phonetic">
+                    <input id="image" type="file" name="image">
+                    <input type="submit">
+                </form>
             </div>
 
-            <form id="contentInsert" enctype="multipart/form-data" method="post">
-                <input id="word" type="text" name="word">
-                <input id="phonetic" type="file" name="phonetic">
-                <input id="image" type="file" name="image">
-                <input type="submit">
-            </form>
-        </div>
+            </div>
+            <!--Modal-->
+
 
         <footer>
             <div>
@@ -229,9 +284,7 @@
 
 
 <script src="/dependencies/popper.min.js"></script>
-<script src="/js/place-icons.js"></script>
 <script src="/dependencies/bootstrap.min.js"></script>
-
     <script type="text/javascript">
     $(document).ready(() => {
 
@@ -272,7 +325,8 @@
             let image = $("#image").val();
 
             let formData = new FormData();
-            formData.append("phonetic", $("#phonetic")[0].files[0], "ble");
+            formData.append("phonetic", $("#phonetic")[0].files[0], $("#phonetic")[0].files[0].name);
+            console.log($("#phonetic")[0].files[0].type);
             formData.append("word", word);
             // formData.append("image", image);
 
@@ -285,8 +339,8 @@
                 dataType: "json"
             });
         });
-
     });
 </script>
+
 </body>
 </html>

@@ -51,3 +51,18 @@ svg{
 	position: absolute;
 	bottom: 0;
 }
+
+.btn-sqr-lg {
+	width: 150px;
+	height: 150px;
+	margin-left: 40px;
+	margin-right: 40px;
+}
+
+.btn-sqr-lg .icon {
+	/*color: #8cb7ff;*/
+}
+
+.btn-sqr-lg span {
+	font-size: 15px;
+}
