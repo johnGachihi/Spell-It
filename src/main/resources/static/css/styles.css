@@ -66,3 +66,25 @@ svg{
 .btn-sqr-lg span {
 	font-size: 15px;
 }
+
+.sidebar{
+	box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+}
+
+.lessons-area {
+	width: 90%;
+	height: 350px;
+	background-color: rgba(0, 0, 0, .1);
+}
+
+.bottom-border {
+	border-bottom: 1px solid #e5e5e5;
+}
+
+.dark-grey {
+	color: #565759;
+}
+
+.light-grey {
+	color: #a3a5a8;
+}

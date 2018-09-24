@@ -1,19 +1,50 @@
 package com.johnwaithaka.angel.controllers;
 
-import com.johnwaithaka.angel.DTOs.WordDto;
-import com.johnwaithaka.angel.entities.Word;
+import com.johnwaithaka.angel.DTOs.AdminDto;
+import com.johnwaithaka.angel.entities.Level;
+import com.johnwaithaka.angel.repositories.LevelRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
+import java.util.List;
+
 @Controller
 public class AddContentController {
+
+    @Autowired
+    LevelRepository levelRepository;
+
+    @RequestMapping("/edit-content")
+    public String addContent(
+            Model model,
+            @RequestParam(value="getLevel", required=false)String levelId
+    ){
+        AdminDto adminDto = new AdminDto();
+        model.addAttribute("newAdmin", adminDto);
+
+        int presentLevels = getNumberOfLevels();
+        /*If levels are greater than a certain number restrict*/
+        if(presentLevels > 14){}
+
+        model.addAttribute("levelAndNumber", "Level " + presentLevels+1);
+
+        if(levelId == null){
+            model.addAttribute("level", new Level());
+        } else {
+            Level l = getLevel(levels(levelRepository), levelId);
+            model.addAttribute("level", l);
+        }
+
+        return "edit-content";
+    }
 
     @RequestMapping(value = "new-content")
     @ResponseStatus(value = HttpStatus.OK)
@@ -30,5 +61,24 @@ public class AddContentController {
     @Bean
     public StandardServletMultipartResolver multipartResolver() {
         return new StandardServletMultipartResolver();
+    }
+
+    private Level getLevel(List<Level> levels, String id){
+        for(Level level : levels){
+            if(level.getId().equals(id)){
+                return level;
+            }
+        }
+        return null;
+    }
+
+
+    private List<Level> levels(LevelRepository levelRepository){
+        return levelRepository.findAll();
+
+    }
+
+    private int getNumberOfLevels(){
+        return (int)levelRepository.count();
     }
 }

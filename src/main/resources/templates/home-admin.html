@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments.html :: headerfiles"></head>
+<body>
+<nav th:replace="login.html :: header"></nav>
+<div class="container-fluid">
+    <div class="row">
+        <!--col-md-2-->
+        <nav th:replace="add-content.html :: sideMenu"></nav>
+        <div class="col container">
+            <div class="row mt-5 pb-5 mb-4 bottom-border">
+                <div class="mx-auto">
+                    <a class="btn btn-sqr-lg btn-primary" href="#" >
+                        <i class="icon fas fa-users fa-5x my-2 d-block"></i>
+                        <span>Users</span>
+                    </a>
+                    <a class="btn btn-sqr-lg btn-primary" href="#" >
+                        <i class="icon fas fa-user-clock fa-5x my-2 d-block"></i>
+                        <span>Currently Using</span>
+                    </a>
+                    <a class="btn btn-sqr-lg btn-primary" href="#" >
+                        <i class="fas fa-plus-circle fa-5x my-2 d-block"></i>
+                        <span>Add Level</span>
+                    </a>
+                </div>
+            </div>
+            <div class="">
+                <h1 class="h2 pl-5 mt-4 pt-2">User Stats</h1>
+            </div>
+            <div class="row w-75 h-50 mx-auto">
+                <canvas id="home-stats-chart" width="100" height="50"></canvas>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="/built/bundle.js"></script>
+
+<script src="/dependencies/popper.min.js"></script>
+<script src="/dependencies/bootstrap.min.js"></script>
+</body>
+</html>

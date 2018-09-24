@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="headerfiles">
+    <meta charset="UTF-8">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <title th:text="${pageTitle}"></title>
+    <link rel="stylesheet" href="/dependencies/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/styles.css">
+    <script src="/dependencies/jquery-3.3.1.js"></script>
+    <link rel="stylesheet" href="/fontawesome-free/css/all.min.css">
+    <script type="text/javascript">
+        function onDropHandler(e) {
+            console.log("Items dropped");
+
+            e.preventDefault();
+
+            if(e.dataTransfer.items){
+                for(var i = 0; i < e.dataTransfer.items.length; i++){
+                    if(e.dataTransfer.items[i].kind === "file"){
+                        var file = e.dataTransfer.items[i].getAsFile();
+                        console.log(file.name);
+                    }
+                }
+            } else {
+                for(var i=0; i<e.dataTransfer.files.length; i++){
+                    console.log(e.dataTransfer.files[i].name);
+                }
+            }
+        }
+
+        function onDragOverHandler(e){
+            e.preventDefault();
+        }
+    </script>
+</head>
+<body>
+
+</body>
+</html>

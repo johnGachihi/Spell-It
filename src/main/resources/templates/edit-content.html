@@ -217,12 +217,28 @@
             <div class="mainContent">
                 <div class="container">
                     <h1 class="h3 my-4 dark-grey">Level Configuration</h1>
-                    <h1 class="h4 my-4 dark-grey" th:text="${level}">Level</h1>
+                    <h1 class="h4 my-4 pb-3 dark-grey bottom-border" th:text="${levelAndNumber}"></h1>
 
                     <div>
-                        <h1 class="h5 mt-4 dark-grey">Lessons</h1>
-                        <div class="lessons-area">
+                        <div class="d-flex justify-content-between mx-auto mb-1" style="width: 90%;">
+                            <h1 class="h5 dark-grey ">Lessons</h1>
+                            <a href="#" class="fas fa-plus-circle fa-2x"></a>
+                        </div>
+                        <div class="lessons-area mx-auto mb-5">
+                            <div th:if="${#lists.isEmpty(level.lessons)}" class="w-100 h-100 d-flex justify-content-center align-items-center">
+                                <span class="h3 light-grey">No Available Lessons</span>
+                            </div>
+                        </div>
 
+                        <div class="mx-auto mb-1" style="width: 90%;">
+                            <h1 class="h5 dark-grey ">Checkpoint</h1>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <div id="checkpointImageDropArea">
+                                <img src="asdf" width="100" height="100">
+                            </div>
+
+                            <form></form>
                         </div>
                     </div>
                 </div>
