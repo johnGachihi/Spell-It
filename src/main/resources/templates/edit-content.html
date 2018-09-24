@@ -214,13 +214,18 @@
                 </div>
             </nav>
 
-            <!--<div>
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#registerAdminModal">
-                    Register User
-                </button>
-            </div>
--->
             <div class="mainContent">
+                <div class="container">
+                    <h1 class="h3 my-4 dark-grey">Level Configuration</h1>
+                    <h1 class="h4 my-4 dark-grey" th:text="${level}">Level</h1>
+
+                    <div>
+                        <h1 class="h5 mt-4 dark-grey">Lessons</h1>
+                        <div class="lessons-area">
+
+                        </div>
+                    </div>
+                </div>
                 <div class="modal fade" id="registerAdminModal" tabindex="-1" role="dialog" aria-labelledby="registerAdminModalTitle" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content">
