@@ -3,17 +3,17 @@ package com.johnwaithaka.angel.controllers;
 import com.johnwaithaka.angel.DTOs.AdminDto;
 import com.johnwaithaka.angel.entities.Level;
 import com.johnwaithaka.angel.repositories.LevelRepository;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
+import java.io.File;
 import java.util.List;
 
 @Controller
@@ -46,6 +46,12 @@ public class AddContentController {
         return "edit-content";
     }
 
+    @RequestMapping(value = "edit-lesson")
+    public String editLessonPage(@RequestParam int lessonNumber, Model model){
+        model.addAttribute("lessonNumber", "Level " + lessonNumber);
+        return "edit-lesson";
+    }
+
     @RequestMapping(value = "new-content")
     @ResponseStatus(value = HttpStatus.OK)
     public void receiveWord(
@@ -57,6 +63,28 @@ public class AddContentController {
         System.out.println("Content type: " + phonetic.getContentType());
         System.out.println();
     }
+
+    @RequestMapping(value = "lesson-submit")
+    public void lessonSubmission(
+            @RequestParam String word,
+            @RequestParam List<String> segments,
+            @RequestParam MultipartFile wordImage,
+            @RequestParam MultipartFile wordPhonetic,
+            @RequestParam(required = false) String levelID
+    ) {
+
+        //Left of here. Consider re-structuring this if statement.
+        if (levelID == null) {
+            ObjectId oID = new ObjectId();
+            String objectID = oID.toString();
+            System.out.println(objectID);
+            Level level = new Level();
+            level.setId(objectID);
+            level.getLessons().add(wordImage.t);
+            new File()
+        }
+    }
+
 
     @Bean
     public StandardServletMultipartResolver multipartResolver() {

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: headerfiles"></head>
+
+<body class="back-grey">
+
+<div class="container" style="background-color: #ffffff">
+    <div>
+        <h1 class="h2 dark-grey text-center" th:text="${lessonNumber}"></h1>
+    </div>
+
+    <div class="w-50 mx-auto">
+        <form>
+            <div class="form-group">
+                <label for="blendInput">Blend</label>
+                <input id="blendInput" name="word" type="text" class="form-control form-control-lg">
+            </div>
+            <div class="form-group">
+                <label for="blendInput">Segments</label>
+                <input id="segmentsInput" name="segments" type="text" class="form-control form-control-lg">
+            </div>
+            <div class="form-group">
+                <label for="wordImage">Insert image of the word</label>
+                <input id="wordImage" type="file" name="wordImage">
+
+                <label for="wordPhonetic">Insert image of the word</label>
+                <input id="wordPhonetic" type="file" name="wordPhonetic">
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="/dependencies/popper.min.js"></script>
+<script src="/dependencies/bootstrap.min.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(() => {
+
+        var $blendInput = $("#blendInput");
+        var $segmentsInput = $("#segmentsInput");
+        var $wordImage = $("#wordImage");
+        var $wordPhonetic = $("#wordPhonetic");
+
+        var segmentsInput = $segmentsInput.val().split();
+
+        let formData = new FormData();
+
+        formData.append("blendInput", $blendInput.val());
+        formData.append("blendPhonetic", segmentsInput);
+        formData.append("wordImage", $wordImage[0].files[0], $wordImage[0].files[0].name);
+        formData.append("wordPhonetic", $wordPhonetic[0].files[0], $wordPhonetic[0].files[0].name);
+
+        post({
+            url: "edit-content.html",
+            data: formData,
+            dataType: "json"
+        });
+
+    })
+
+</script>
+
+</body>
+</html>

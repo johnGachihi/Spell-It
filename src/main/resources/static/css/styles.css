@@ -88,3 +88,11 @@ svg{
 .light-grey {
 	color: #a3a5a8;
 }
+
+.w-90 {
+	width: 90%;
+}
+
+.back-grey {
+	background-color: #a3a5a8;
+}

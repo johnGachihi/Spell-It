@@ -13,7 +13,6 @@ public class Lesson {
     @Id
     private String id;
     private Word word;
-    private String rewardName;
 
     private Lesson(){}
 
@@ -21,8 +20,4 @@ public class Lesson {
         this.word = word;
     }
 
-    public Lesson(Word word, String rewardName) {
-        this.word = word;
-        this.rewardName = rewardName;
-    }
 }

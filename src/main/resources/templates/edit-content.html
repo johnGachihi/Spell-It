@@ -34,10 +34,13 @@
         }
     </script>
 </head>
+
 <body>
     <nav th:replace="login.html :: header"></nav>
 
     <div class="container-fluid">
+        <!--To store Level object-->
+        <input id="levelID" type="hidden" th:value="${level.getId()}">
         <div class="row">
             <!--This fragment should be placed inside a row inside a container-fluid-->
             <nav th:fragment="sideMenu" class="col-md-2 d-none d-md-block bg-light sidebar py-2 mr-2">
@@ -214,31 +217,78 @@
                 </div>
             </nav>
 
-            <div class="mainContent">
+            <div class="mainContent col">
                 <div class="container">
                     <h1 class="h3 my-4 dark-grey">Level Configuration</h1>
                     <h1 class="h4 my-4 pb-3 dark-grey bottom-border" th:text="${levelAndNumber}"></h1>
 
                     <div>
-                        <div class="d-flex justify-content-between mx-auto mb-1" style="width: 90%;">
+                        <div class="d-flex justify-content-between mx-auto mb-1 " style="width: 90%;">
                             <h1 class="h5 dark-grey ">Lessons</h1>
-                            <a href="#" class="fas fa-plus-circle fa-2x"></a>
+
+                            <a id="addLesson" href="#" class="fas fa-plus-circle fa-2x"></a>
                         </div>
-                        <div class="lessons-area mx-auto mb-5">
-                            <div th:if="${#lists.isEmpty(level.lessons)}" class="w-100 h-100 d-flex justify-content-center align-items-center">
-                                <span class="h3 light-grey">No Available Lessons</span>
+                        <div id="lessons-area" class="lessons-area mx-auto mb-5 position-relative" style="z-index: 1;">
+                                <div th:if="${#lists.isEmpty(level.lessons)}" class="w-100 h-100 d-flex justify-content-center align-items-center">
+                                    <span class="h3 light-grey">No Available Lessons</span>
+                                </div>
+                                <!--Lesson creation form-->
+                                <div id="addLessonArea" class="container position-absolute w-100 h-100" style="z-index: 2; top: 0; background-color: white; display: none;">
+                                    <div>
+                                        <h1 class="h2 dark-grey text-center" th:text="'Lesson ' + ((${level.lessons} != null) ? ${level.lessons.size() + 1} : '1')"></h1>
+                                    </div>
+
+                                    <div class="w-50 mx-auto">
+                                        <form>
+                                            <div class="form-group">
+                                                <label for="wordInput">Blend</label>
+                                                <input id="wordInput" name="word" type="text" class="form-control form-control-lg">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="segmentsInput">Segments</label>
+                                                <input id="segmentsInput" name="segments" type="text" class="form-control form-control-lg">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="wordImage">Insert image of the word</label>
+                                                <input id="wordImage" type="file" name="wordImage">
+
+                                                <label for="wordPhonetic">Insert phonetics of the word</label>
+                                                <input id="wordPhonetic" type="file" name="wordPhonetic">
+                                            </div>
+                                            <button id="lessonContentSubmit" class="btn btn-primary">Submit</button>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
 
                         <div class="mx-auto mb-1" style="width: 90%;">
                             <h1 class="h5 dark-grey ">Checkpoint</h1>
                         </div>
-                        <div class="d-flex justify-content-between">
-                            <div id="checkpointImageDropArea">
-                                <img src="asdf" width="100" height="100">
+                        <div class="d-flex w-90 mx-auto">
+                            <div id="checkpointImageDropArea" class="w-25">
+                                <div class="back-grey h-100" style="display: table;">
+                                    <div th:if="${level == null || level.checkPoint == null || level.checkPoint.wordImage == null}">
+                                        <h1 class="h3 dark-grey">Insert image</h1>
+                                        <a id="checkpointImageUpload" href="#" class="fa fa-upload fa-4x"></a>
+                                    </div>
+                                    <!--<img th:if="${not level == null || not level.checkPoint == null || not level.checkPoint.wordImage == null}" th:src="" src="asdf" width="100" height="100">-->
+                                </div>
                             </div>
 
-                            <form></form>
+                            <form class="align-self-center">
+                                <input id="checkpointWordImage" type="file" name="checkpointWordImage" required class="d-none">
+                                <div class="form-group mb-3">
+                                    <input type="text" name="quizWord" class="form-control" required placeholder="Insert a word.">
+                                    <small id="quizWordHelp" class="form-text text-muted">Insert complete word. eg belt</small>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" name="incompleteQuizWord" required class="form-control" placeholder="Insert an incomplete word.">
+                                    <small id="incompleteQuizWordHelp" class="form-text text-muted">Insert complete word. eg b_lt</small>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="w-25 mx-auto my-5">
+                            <button class="btn btn-primary w-100">Add lesson</button>
                         </div>
                     </div>
                 </div>
@@ -274,7 +324,7 @@
                     </div>
                 </div>
 
-                <div class="card w-50" style="height: 200px">
+                <!--<div class="card w-50" style="height: 200px">
                     <div style="height: 100%" ondrop="onDropHandler(event);" ondragover="onDragOverHandler(event)">
                         <span>Drag file over</span>
                     </div>
@@ -286,7 +336,7 @@
                     <input id="phonetic" type="file" name="phonetic">
                     <input id="image" type="file" name="image">
                     <input type="submit">
-                </form>
+                </form>-->
             </div>
 
             </div>
@@ -309,8 +359,17 @@
     <script type="text/javascript">
     $(document).ready(() => {
 
+        var $addLesson = $("#addLesson");
+        var $lessonsArea = $("#lessons-area");
+        var $level = $("#level");
+        var $checkpointWordImageInput = $("#checkpointWordImage")
+
         var csrf_token = $("meta[name='_csrf']").attr("content");
         var csrf_header = $("meta[name='_csrf_header']").attr("content");
+
+        var formData = new FormData();
+
+        var lessons = [];
 
         $(document).ajaxSend((e, xhr, settings) => {
             xhr.setRequestHeader(csrf_header, csrf_token);
@@ -360,7 +419,28 @@
                 dataType: "json"
             });
         });
+
+        $addLesson.on("click", (e)=> {
+            e.preventDefault();
+
+            console.log("clicked");
+
+            $("#addLessonArea").toggle();
+        });
+
+        $("#checkpointImageUpload").on("click", (e) => {
+            e.preventDefault();
+
+            $checkpointWordImageInput.trigger("click");
+        });
+
+        $("#lessonContentSubmit").on("click", (e) => {
+            e.preventDefault();
+
+        });
     });
+
+
 </script>
 
 </body>
