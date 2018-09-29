@@ -2,13 +2,19 @@ package com.johnwaithaka.angel.payroll;
 
 import com.johnwaithaka.angel.Utility.BinarySearch;
 import com.johnwaithaka.angel.entities.Admin;
+import com.johnwaithaka.angel.entities.Lesson;
+import com.johnwaithaka.angel.entities.Level;
+import com.johnwaithaka.angel.entities.Word;
 import com.johnwaithaka.angel.repositories.AdminRepository;
+import com.johnwaithaka.angel.repositories.LevelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.xml.crypto.Data;
+import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -17,14 +23,17 @@ public class DatabaseLoader implements CommandLineRunner {
     private final EmployeeRepository employeeRepository;
     private final AdminRepository adminRepository;
     private PasswordEncoder passwordEncoder;
+    private final LevelRepository levelRepository;
 
     @Autowired
     public DatabaseLoader(EmployeeRepository employeeRepository,
                           AdminRepository adminRepository,
-                          PasswordEncoder passwordEncoder){
+                          PasswordEncoder passwordEncoder,
+                          LevelRepository levelRepository){
         this.employeeRepository = employeeRepository;
         this.adminRepository = adminRepository;
         this.passwordEncoder = passwordEncoder;
+        this.levelRepository = levelRepository;
     }
 
     @Override
@@ -36,6 +45,18 @@ public class DatabaseLoader implements CommandLineRunner {
             this.adminRepository.save(new Admin("john@gmail.com", passwordEncoder.encode("1234")));
         }
 
+        Level l = new Level();
+        l.addLesson(
+            new Lesson(
+                new Word(
+                        "ble",
+                        Arrays.asList(new String[]{"b", "le"}),
+                        new File("C:/users/john/Pictures/good images/cup_and_blue.jpg"),
+                        new File("C:/users/john/Pictures/good images/cup_and_blue.jpg")
+                )
+        ));
+
+        levelRepository.save(l);
 
        /* List<Admin> admins = this.adminRepository.findAll();
         for(Admin admin : admins){

@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -47,4 +48,12 @@ public class Level {
     public void setId(String id) {
         this.id = id;
     }
+
+    public void addLesson(Lesson l){
+        if (lessons == null){
+            lessons = new ArrayList<>();
+        }
+        lessons.add(l);
+    }
+
 }

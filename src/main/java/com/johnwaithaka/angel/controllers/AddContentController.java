@@ -1,7 +1,9 @@
 package com.johnwaithaka.angel.controllers;
 
 import com.johnwaithaka.angel.DTOs.AdminDto;
+import com.johnwaithaka.angel.entities.Lesson;
 import com.johnwaithaka.angel.entities.Level;
+import com.johnwaithaka.angel.entities.Word;
 import com.johnwaithaka.angel.repositories.LevelRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +16,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class AddContentController {
@@ -64,25 +70,38 @@ public class AddContentController {
         System.out.println();
     }
 
-    @RequestMapping(value = "lesson-submit")
-    public void lessonSubmission(
+    @PostMapping(value = "lesson-submit")
+    @ResponseBody
+    public Level lessonSubmission(
             @RequestParam String word,
             @RequestParam List<String> segments,
             @RequestParam MultipartFile wordImage,
             @RequestParam MultipartFile wordPhonetic,
             @RequestParam(required = false) String levelID
     ) {
+        Level level;
 
-        //Left of here. Consider re-structuring this if statement.
-        if (levelID == null) {
-            ObjectId oID = new ObjectId();
-            String objectID = oID.toString();
+        System.out.println("la: " + levelID);
+        if (levelID != null && !levelID.isEmpty()){
+            Optional<Level> oLevel = levelRepository.findById(levelID);
+            level = oLevel.get();
+        } else {
+            String objectID = new ObjectId().toString();
             System.out.println(objectID);
-            Level level = new Level();
+            level = new Level();
             level.setId(objectID);
-            level.getLessons().add(wordImage.t);
-            new File()
         }
+
+        Word w = new Word(
+                word,
+                segments,
+                multipartToFile(wordImage),
+                multipartToFile(wordPhonetic)
+        );
+
+        level.addLesson(new Lesson(w));
+
+        return levelRepository.save(level);
     }
 
 
@@ -108,5 +127,18 @@ public class AddContentController {
 
     private int getNumberOfLevels(){
         return (int)levelRepository.count();
+    }
+
+    private File multipartToFile(MultipartFile mf) {
+        File f = new File("C:\\users\\john\\desktop\\spellit", mf.getOriginalFilename());
+        try {
+            FileOutputStream fos = new FileOutputStream(f);
+            fos.write(mf.getBytes());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return f;
     }
 }

@@ -4,7 +4,7 @@ var $levelID = $("#levelID");
 $("#lessonContentSubmit").on("click", (e) => {
    e.preventDefault();
 
-
+   console.log("lessonContentSubmit clicked")
     /*var data = {"name": "Nzoia", "foods": [{name: "Gith", price: 20}, {name: "Meat", price: 25}]};
 
     $.post({
@@ -32,7 +32,8 @@ $("#lessonContentSubmit").on("click", (e) => {
         url: "/lesson-submit",
         method: "post",
         data: formData,
-        contentType: "application/json; charset=utf-8",
+        contentType: false,
+        processData: false,
         dataType: "json"
     });
 });

@@ -372,6 +372,7 @@
         var lessons = [];
 
         $(document).ajaxSend((e, xhr, settings) => {
+            console.log("ajaxSend called!");
             xhr.setRequestHeader(csrf_header, csrf_token);
         });
 
@@ -440,8 +441,8 @@
         });
     });
 
-
 </script>
+    <script src="/js/lessonContentSubmit.js"></script>
 
 </body>
 </html>
