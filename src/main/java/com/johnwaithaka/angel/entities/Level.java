@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +16,7 @@ public class Level {
     private List<Lesson> lessons;
     private CheckPoint checkPoint;
     private Reward reward;
+    private int levelNo;
 
     public String getId() {
         return id;
@@ -56,4 +58,11 @@ public class Level {
         lessons.add(l);
     }
 
+    public int getLevelNo() {
+        return levelNo;
+    }
+
+    public void setLevelNo(int levelNo) {
+        this.levelNo = levelNo;
+    }
 }

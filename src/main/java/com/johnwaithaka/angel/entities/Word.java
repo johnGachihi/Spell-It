@@ -15,16 +15,32 @@ public class Word {
     String id;
     String text;
     List<String> wordSegments;
-    File image;
-    File phonetic;
+    String imagePath;
+    String phoneticPath;
 
     public Word() {
     }
 
-    public Word(String text, List<String> wordSegments, File phonetic, File image) {
+    public Word(String text, List<String> wordSegments, String imagePath, String phoneticPath) {
         this.text = text;
         this.wordSegments = wordSegments;
-        this.phonetic = phonetic;
-        this.image = image;
+        this.phoneticPath = phoneticPath;
+        this.imagePath = imagePath;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public List<String> getWordSegments() {
+        return wordSegments;
+    }
+
+    public String getImage() {
+        return imagePath;
+    }
+
+    public String getPhonetic() {
+        return phoneticPath;
     }
 }

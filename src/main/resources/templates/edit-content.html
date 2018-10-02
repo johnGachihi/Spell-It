@@ -41,6 +41,7 @@
     <div class="container-fluid">
         <!--To store Level object-->
         <input id="levelID" type="hidden" th:value="${level.getId()}">
+        <input id="levelNo" type="hidden" th:value="${level.levelNo}">
         <div class="row">
             <!--This fragment should be placed inside a row inside a container-fluid-->
             <nav th:fragment="sideMenu" class="col-md-2 d-none d-md-block bg-light sidebar py-2 mr-2">
@@ -123,13 +124,13 @@
 
                                 <span th:case="*">
                                     <a class="dropdown-toggle" th:text="${menuItem.text}"
-                                       data-toggle="collapse" href="#sidebar-items"
+                                       data-toggle="collapse" th:href="'#' + ${menuItem.id}"
                                        aria-expanded="false" aria-controls="sidebar-items"
                                     ></a>
 
-                                    <ul class="collapse list-group" id="sidebar-items">
+                                    <ul class="collapse list-group" th:id="${menuItem.id}">
                                         <li th:each="menuSubItem: ${menuItem.menuItems}" class="list-group-item">
-                                            <a th:href="@{menuSubItem.link}" th:text="${menuSubItem.text}"></a>
+                                            <a th:href="@{/edit-content(levelId=${menuSubItem.id})}" th:text="${menuSubItem.text}"></a>
                                         </li>
                                     </ul>
                                 </span>
@@ -220,7 +221,7 @@
             <div class="mainContent col">
                 <div class="container">
                     <h1 class="h3 my-4 dark-grey">Level Configuration</h1>
-                    <h1 class="h4 my-4 pb-3 dark-grey bottom-border" th:text="${levelAndNumber}"></h1>
+                    <h1 class="h4 my-4 pb-3 dark-grey bottom-border" th:text="'Level ' + ${level.levelNo}"></h1>
 
                     <div>
                         <div class="d-flex justify-content-between mx-auto mb-1 " style="width: 90%;">
@@ -228,14 +229,25 @@
 
                             <a id="addLesson" href="#" class="fas fa-plus-circle fa-2x"></a>
                         </div>
-                        <div id="lessons-area" class="lessons-area mx-auto mb-5 position-relative" style="z-index: 1;">
-                                <div th:if="${#lists.isEmpty(level.lessons)}" class="w-100 h-100 d-flex justify-content-center align-items-center">
+                        <div id="lessons-area" class="lessons-area mx-auto mb-5 position-relative pt-1" style="z-index: 1; overflow: scroll;">
+                                <div id="no-lessons-message" th:if="${#lists.isEmpty(level.lessons)}" class="w-100 h-100 justify-content-center align-items-center" style="display: flex">
                                     <span class="h3 light-grey">No Available Lessons</span>
+                                </div>
+                                <div th:if="${not #lists.isEmpty(level.lessons)}">
+                                    <div th:each="lesson, iterStat: ${level.lessons}">
+                                        <div class="card m-2 border-primary w-50" style="width: 100px; height: 100px;">
+                                            <div class="card-header" th:text="'Lesson ' + ${iterStat.count}"></div>
+                                            <img src="" class="card-img-top">
+                                            <div class="card-text mx-1">Word:
+                                                <span style="font-weight: bold" th:text="${lesson.word.text}"></span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <!--Lesson creation form-->
                                 <div id="addLessonArea" class="container position-absolute w-100 h-100" style="z-index: 2; top: 0; background-color: white; display: none;">
                                     <div>
-                                        <h1 class="h2 dark-grey text-center" th:text="'Lesson ' + ((${level.lessons} != null) ? ${level.lessons.size() + 1} : '1')"></h1>
+                                        <h1 class="h2 dark-grey text-center" th:text="'Lesson ' + ((${level.lessons} != null) ? ${level.lessons.size() + 1} : '')"></h1>
                                     </div>
 
                                     <div class="w-50 mx-auto">
@@ -266,29 +278,28 @@
                         </div>
                         <div class="d-flex w-90 mx-auto">
                             <div id="checkpointImageDropArea" class="w-25">
-                                <div class="back-grey h-100" style="display: table;">
-                                    <div th:if="${level == null || level.checkPoint == null || level.checkPoint.wordImage == null}">
+                                <div class="back-grey h-100 position-relative" style="width: 150px; height: 150px">
+                                    <div th:if="${level == null || level.checkPoint == null || level.checkPoint.wordImagePath == null}" style="z-index: 1;">
                                         <h1 class="h3 dark-grey">Insert image</h1>
                                         <a id="checkpointImageUpload" href="#" class="fa fa-upload fa-4x"></a>
                                     </div>
-                                    <!--<img th:if="${not level == null || not level.checkPoint == null || not level.checkPoint.wordImage == null}" th:src="" src="asdf" width="100" height="100">-->
+                                    <img id="checkpointWordImageViewer" src="#" width="150" height="150" style="position: absolute; top: 0; display: none; z-index: 5">
                                 </div>
                             </div>
-
                             <form class="align-self-center">
                                 <input id="checkpointWordImage" type="file" name="checkpointWordImage" required class="d-none">
                                 <div class="form-group mb-3">
-                                    <input type="text" name="quizWord" class="form-control" required placeholder="Insert a word.">
+                                    <input id="quizWord" type="text" name="quizWord" class="form-control" required placeholder="Insert a word.">
                                     <small id="quizWordHelp" class="form-text text-muted">Insert complete word. eg belt</small>
                                 </div>
                                 <div class="form-group">
-                                    <input type="text" name="incompleteQuizWord" required class="form-control" placeholder="Insert an incomplete word.">
+                                    <input id="incompleteQuizWord" type="text" name="incompleteQuizWord" required class="form-control" placeholder="Insert an incomplete word.">
                                     <small id="incompleteQuizWordHelp" class="form-text text-muted">Insert complete word. eg b_lt</small>
                                 </div>
                             </form>
                         </div>
-                        <div class="w-25 mx-auto my-5">
-                            <button class="btn btn-primary w-100">Add lesson</button>
+                        <div class="w-50 mx-auto my-5">
+                            <button id="addLevelBtn" class="btn btn-primary w-100">Add level</button>
                         </div>
                     </div>
                 </div>
@@ -339,6 +350,10 @@
                 </form>-->
             </div>
 
+            <div id="testerDiv">
+                <img id="imaage" src="#" alt="Image Image">
+            </div>
+
             </div>
             <!--Modal-->
 
@@ -362,7 +377,7 @@
         var $addLesson = $("#addLesson");
         var $lessonsArea = $("#lessons-area");
         var $level = $("#level");
-        var $checkpointWordImageInput = $("#checkpointWordImage")
+        var $checkpointWordImageInput = $("#checkpointWordImage");
 
         var csrf_token = $("meta[name='_csrf']").attr("content");
         var csrf_header = $("meta[name='_csrf_header']").attr("content");

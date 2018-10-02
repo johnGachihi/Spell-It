@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import javax.xml.crypto.Data;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,6 +40,7 @@ public class DatabaseLoader implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         adminRepository.deleteAll();
+//        levelRepository.deleteAll();
 
         this.employeeRepository.save(new Employee("John", "Gachihi", "I do not know him"));
         for(int i = 0; i < 1; i++){
@@ -51,8 +53,8 @@ public class DatabaseLoader implements CommandLineRunner {
                 new Word(
                         "ble",
                         Arrays.asList(new String[]{"b", "le"}),
-                        new File("C:/users/john/Pictures/good images/cup_and_blue.jpg"),
-                        new File("C:/users/john/Pictures/good images/cup_and_blue.jpg")
+                        new File("C:/users/john/Pictures/good images/cup_and_blue.jpg").getName(),
+                        new File("C:/users/john/Pictures/good images/cup_and_blue.jpg").getName()
                 )
         ));
 

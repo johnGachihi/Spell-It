@@ -1,24 +1,31 @@
 package com.johnwaithaka.angel.controllers;
 
 import com.johnwaithaka.angel.DTOs.AdminDto;
+import com.johnwaithaka.angel.DTOs.CheckpointDTO;
+import com.johnwaithaka.angel.DTOs.LessonDTO;
+import com.johnwaithaka.angel.entities.CheckPoint;
 import com.johnwaithaka.angel.entities.Lesson;
 import com.johnwaithaka.angel.entities.Level;
 import com.johnwaithaka.angel.entities.Word;
+import com.johnwaithaka.angel.models.MenuItem;
 import com.johnwaithaka.angel.repositories.LevelRepository;
+import com.johnwaithaka.angel.services.FileService;
+import com.johnwaithaka.angel.services.LevelsService;
+import jdk.internal.util.xml.impl.Input;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,26 +33,37 @@ import java.util.Optional;
 public class AddContentController {
 
     @Autowired
-    LevelRepository levelRepository;
+    LevelsService levelsService;
+    @Autowired
+    FileService fileService;
 
     @RequestMapping("/edit-content")
     public String addContent(
             Model model,
-            @RequestParam(value="getLevel", required=false)String levelId
+            @RequestParam(required=false)String levelId
     ){
         AdminDto adminDto = new AdminDto();
         model.addAttribute("newAdmin", adminDto);
 
-        int presentLevels = getNumberOfLevels();
+        int presentLevels = levelsService.countLevels();
         /*If levels are greater than a certain number restrict*/
         if(presentLevels > 14){}
 
-        model.addAttribute("levelAndNumber", "Level " + presentLevels+1);
+//        model.addAttribute("levelAndNumber", "Level " + presentLevels+1);
+
+        List<MenuItem> menuItems = MenuItem.levelsToMenuItems(
+                levelsService.findAllLevels()
+        );
+        model.addAttribute("menuItems", menuItems);
 
         if(levelId == null){
-            model.addAttribute("level", new Level());
+            String id = new ObjectId().toString();
+            Level l = new Level();
+            l.setId(id);
+            l.setLevelNo(presentLevels+1);
+            model.addAttribute("level", l);
         } else {
-            Level l = getLevel(levels(levelRepository), levelId);
+            Level l = levelsService.findById(levelId).orElse(null);
             model.addAttribute("level", l);
         }
 
@@ -58,87 +76,96 @@ public class AddContentController {
         return "edit-lesson";
     }
 
-    @RequestMapping(value = "new-content")
-    @ResponseStatus(value = HttpStatus.OK)
-    public void receiveWord(
-            @RequestParam(value = "word") String word,
-            @RequestParam(value = "phonetic")MultipartFile phonetic)
-    {
-        System.out.println("Word inserted: " + word);
-        System.out.println("File name: " + phonetic.getOriginalFilename());
-        System.out.println("Content type: " + phonetic.getContentType());
-        System.out.println();
-    }
-
     @PostMapping(value = "lesson-submit")
     @ResponseBody
-    public Level lessonSubmission(
+    public LessonDTO lessonSubmission(
             @RequestParam String word,
             @RequestParam List<String> segments,
             @RequestParam MultipartFile wordImage,
             @RequestParam MultipartFile wordPhonetic,
-            @RequestParam(required = false) String levelID
+            @RequestParam(required = false) String levelID,
+            @RequestParam int levelNo
     ) {
-        Level level;
+        Level level1;
 
-        System.out.println("la: " + levelID);
-        if (levelID != null && !levelID.isEmpty()){
-            Optional<Level> oLevel = levelRepository.findById(levelID);
-            level = oLevel.get();
+        Optional<Level> o = levelsService.findById(levelID);
+        if(!o.isPresent()){
+            level1 = new Level();
+            level1.setId(levelID);
         } else {
-            String objectID = new ObjectId().toString();
-            System.out.println(objectID);
-            level = new Level();
-            level.setId(objectID);
+            level1 = o.get();
         }
 
         Word w = new Word(
                 word,
                 segments,
-                multipartToFile(wordImage),
-                multipartToFile(wordPhonetic)
+                fileService.multipartToFile(wordImage).getName(),
+                fileService.multipartToFile(wordPhonetic).getName()
         );
 
-        level.addLesson(new Lesson(w));
+        Lesson lesson = new Lesson(w);
+//        Level level = new Level();
+//        level.setId(levelID);
+        level1.addLesson(lesson);
+        level1.setLevelNo(levelNo);
 
-        return levelRepository.save(level);
+        levelsService.save(level1);
+
+        return new LessonDTO(
+                w.getText(),
+                w.getWordSegments(),
+                w.getImage(),
+                w.getPhonetic(),
+                level1.getLessons().size()
+        );
     }
 
+    @RequestMapping(value = "checkpoint-content")
+    @ResponseBody
+    public Level getCheckpointContent(
+            @RequestParam MultipartFile checkpointWordImage,
+            @RequestParam String quizWord,
+            @RequestParam String incompleteQuizWord,
+            @RequestParam String levelId,
+            @RequestParam int levelNo
+    ) {
+        Level l = null;
+
+        //This is duplicate code.
+        //Should be in a service class!!!
+        Optional<Level> o = levelsService.findById(levelId);
+        if(o.isPresent()){
+            l = o.get();
+        } else {
+            l = new Level();
+            l.setId(levelId);
+        }
+
+        l.setCheckPoint(new CheckPoint(
+                fileService.multipartToFile(checkpointWordImage).getName(),
+                quizWord,
+                incompleteQuizWord
+        ));
+        l.setLevelNo(levelNo);
+
+        return levelsService.save(l);
+    }
+
+    @RequestMapping(value = "content")
+    @ResponseBody
+    public FileSystemResource getFile(@RequestParam String imageName){
+        File f = new File("content/" + imageName);
+        return new FileSystemResource(f);
+    }
+
+//    @RequestMapping(value="w-image")
+//    public byte[] serveImage(){
+//
+//    }
 
     @Bean
     public StandardServletMultipartResolver multipartResolver() {
         return new StandardServletMultipartResolver();
     }
 
-    private Level getLevel(List<Level> levels, String id){
-        for(Level level : levels){
-            if(level.getId().equals(id)){
-                return level;
-            }
-        }
-        return null;
-    }
-
-
-    private List<Level> levels(LevelRepository levelRepository){
-        return levelRepository.findAll();
-
-    }
-
-    private int getNumberOfLevels(){
-        return (int)levelRepository.count();
-    }
-
-    private File multipartToFile(MultipartFile mf) {
-        File f = new File("C:\\users\\john\\desktop\\spellit", mf.getOriginalFilename());
-        try {
-            FileOutputStream fos = new FileOutputStream(f);
-            fos.write(mf.getBytes());
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return f;
-    }
 }

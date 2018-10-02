@@ -20,4 +20,7 @@ public class Lesson {
         this.word = word;
     }
 
+    public Word getWord() {
+        return word;
+    }
 }

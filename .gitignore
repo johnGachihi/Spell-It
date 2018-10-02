@@ -2,6 +2,7 @@
 /node_modules/
 /src/main/resources/static/fontawesome-free/
 !.mvn/wrapper/maven-wrapper.jar
+/content
 
 ### STS ###
 .apt_generated

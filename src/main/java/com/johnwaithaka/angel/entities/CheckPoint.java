@@ -10,15 +10,33 @@ public class CheckPoint {
 
     @Id
     String id;
-    File wordImage;
+    String wordImagePath;
+    String testWord;
     String incompleteTestWord;
 
-    public File getWordImage() {
-        return wordImage;
+    public CheckPoint() {
     }
 
-    public void setWordImage(File wordImage) {
-        this.wordImage = wordImage;
+    public CheckPoint(String wordImagePath, String testWord, String incompleteTestWord) {
+        this.wordImagePath = wordImagePath;
+        this.testWord = testWord;
+        this.incompleteTestWord = incompleteTestWord;
+    }
+
+    public String getWordImagePath() {
+        return wordImagePath;
+    }
+
+    public void setWordImagePath(String wordImagePath) {
+        this.wordImagePath = wordImagePath;
+    }
+
+    public String getTestWord() {
+        return testWord;
+    }
+
+    public void setTestWord(String testWord) {
+        this.testWord = testWord;
     }
 
     public String getIncompleteTestWord() {
