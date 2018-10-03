@@ -3,15 +3,16 @@ package com.johnwaithaka.angel.entities;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Id;
+import java.util.Date;
 
-@Document
-public class User {
-
+@Document(collection = "users")
+public class Angel {
     @Id
     String username;
     String password;
     String levelId;
     double aggregateScore;
+    Date regDate;
 
     public String getUsername() {
         return username;
@@ -43,5 +44,13 @@ public class User {
 
     public void setAggregateScore(double aggregateScore) {
         this.aggregateScore = aggregateScore;
+    }
+
+    public Date getRegDate() {
+        return regDate;
+    }
+
+    public void setRegDate(Date regDate) {
+        this.regDate = regDate;
     }
 }
