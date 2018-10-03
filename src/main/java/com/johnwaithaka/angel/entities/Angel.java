@@ -1,13 +1,16 @@
 package com.johnwaithaka.angel.entities;
 
+import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Id;
 import java.util.Date;
 
+@Data
 @Document(collection = "users")
 public class Angel {
     @Id
+    String id;
     String username;
     String password;
     String levelId;
