@@ -3,6 +3,18 @@ const Chart = require("../../../node_modules/chart.js/src/chart");
 
 var days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+var dayData = [];
+var monthData = [];
+
+$.ajax({
+    url: "/reg-user-count-data",
+    success: (data) => {
+        console.log(data);
+    },
+    error: (jqXHR, status, error) => {
+        console.log(error);
+    }
+})
 
 var ctx = $("#home-stats-chart");
 var lineChart = new Chart(ctx, {
@@ -21,4 +33,4 @@ var lineChart = new Chart(ctx, {
             lineTension: 0
         }]
     }
-})
+});

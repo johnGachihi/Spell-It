@@ -7,9 +7,11 @@ import com.johnwaithaka.angel.entities.Level;
 import com.johnwaithaka.angel.entities.Word;
 import com.johnwaithaka.angel.models.MenuItem;
 import com.johnwaithaka.angel.repositories.AdminRepository;
+import com.johnwaithaka.angel.repositories.AngelRepository;
 import com.johnwaithaka.angel.repositories.LevelRepository;
 import static org.junit.Assert.assertArrayEquals;
 
+import com.johnwaithaka.angel.services.AngelService;
 import org.bson.types.ObjectId;
 import org.junit.Assert;
 import org.junit.Test;
@@ -31,21 +33,13 @@ public class AngelApplicationTests {
     private AdminRepository adminRepository;
     @Autowired
     private LevelRepository levelRepository;
+    @Autowired
+    private AngelRepository angelRepository;
+    @Autowired
+    private AngelService angelService;
 
     @Test
     public void contextLoads() {
-    }
-
-    @Test
-    public void binarySearchTest(){
-//        List<Admin> adminList = adminRepository.findAll();
-//        BinarySearch.getLevelById(adminList, "5ba78b4fafe7d43ac84ad9d3");
-        Long.parseLong("5ba78b4fafe7d43ac84ad9d3", 16);
-    }
-
-    @Test
-    public void ble() {
-        Optional<Level> o = levelRepository.findById(null);
     }
 
     @Test
@@ -90,5 +84,21 @@ public class AngelApplicationTests {
         );
 
         assertArrayEquals(exptectedMenuItems.toArray(), actualMenuItems.toArray());
+    }
+
+    @Test
+    public void testCountUserByRegDate(){
+        Assert.assertEquals(1, angelRepository.countByRegDate(11));
+    }
+
+    @Test
+    public void testGetRegistrationDateCountData() {
+        List<Integer> expected = new ArrayList<Integer>(
+                Arrays.asList(1,1,1,1,1,1,1,1,1,0,1,0)
+        );
+
+        List<Integer> actual = angelService.getRegistrationDateCountData();
+
+        Assert.assertNotEquals(expected.toArray(), actual.toArray());
     }
 }
