@@ -34,15 +34,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.
             authorizeRequests()
-                .antMatchers("/login_here", "/login/**", "/dependencies/**", "/css/**", "/js/**", "/fragments/**").permitAll()
-                //.anyRequest().authenticated()
+                .antMatchers("/login_here", "/login/**", "/dependencies/**", "/css/**", "/js/**", "/fragments/**", "/registration").permitAll()
+                /*/temp-suc-reg should be removed*/
+                .antMatchers("/user/registration*", "/temp-suc-reg").permitAll()
+                .antMatchers("/home-admin", "/edit-content").hasRole("ADMIN")
+                .antMatchers("/user/**").hasRole("USER")
+                .anyRequest().authenticated()
                 .and()
             .formLogin()
                 .loginPage("/login")
                 .failureUrl("/fail_login")
                 .loginProcessingUrl("/login_here")
-                .defaultSuccessUrl("/edit-content")
-                .failureHandler(myAuthenticationFailureHandler())
+                .defaultSuccessUrl("/login-success")
+//                .failureHandler(myAuthenticationFailureHandler())
                 .permitAll();
 
     }

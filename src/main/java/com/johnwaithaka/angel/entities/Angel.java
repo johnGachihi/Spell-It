@@ -4,7 +4,9 @@ import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Id;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Document(collection = "users")
@@ -16,6 +18,7 @@ public class Angel {
     String levelId;
     double aggregateScore;
     Date regDate;
+    List<String> roles;
 
     public String getUsername() {
         return username;
@@ -55,5 +58,14 @@ public class Angel {
 
     public void setRegDate(Date regDate) {
         this.regDate = regDate;
+    }
+
+    public List<String> getRoles(){ return this.roles; }
+
+    public void addRole(String role){
+        if (roles == null)
+            roles = new ArrayList<>();
+
+        roles.add(role);
     }
 }

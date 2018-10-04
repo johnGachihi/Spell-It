@@ -20,10 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -88,7 +85,7 @@ public class AngelApplicationTests {
 
     @Test
     public void testCountUserByRegDate(){
-        Assert.assertEquals(1, angelRepository.countByRegDate(11));
+        Assert.assertEquals(1, angelRepository.countByRegDate(11, new Date()));
     }
 
     @Test
@@ -99,6 +96,6 @@ public class AngelApplicationTests {
 
         List<Integer> actual = angelService.getRegistrationDateCountData();
 
-        Assert.assertNotEquals(expected.toArray(), actual.toArray());
+        Assert.assertEquals(expected, actual);
     }
 }

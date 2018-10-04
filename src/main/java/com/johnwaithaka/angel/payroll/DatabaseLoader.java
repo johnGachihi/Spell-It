@@ -1,11 +1,9 @@
 package com.johnwaithaka.angel.payroll;
 
 import com.johnwaithaka.angel.Utility.BinarySearch;
-import com.johnwaithaka.angel.entities.Admin;
-import com.johnwaithaka.angel.entities.Lesson;
-import com.johnwaithaka.angel.entities.Level;
-import com.johnwaithaka.angel.entities.Word;
+import com.johnwaithaka.angel.entities.*;
 import com.johnwaithaka.angel.repositories.AdminRepository;
+import com.johnwaithaka.angel.repositories.AngelRepository;
 import com.johnwaithaka.angel.repositories.LevelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -16,6 +14,7 @@ import javax.xml.crypto.Data;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -25,16 +24,19 @@ public class DatabaseLoader implements CommandLineRunner {
     private final AdminRepository adminRepository;
     private PasswordEncoder passwordEncoder;
     private final LevelRepository levelRepository;
+    private final AngelRepository angelRepository;
 
     @Autowired
     public DatabaseLoader(EmployeeRepository employeeRepository,
                           AdminRepository adminRepository,
                           PasswordEncoder passwordEncoder,
-                          LevelRepository levelRepository){
+                          LevelRepository levelRepository,
+                          AngelRepository angelRepository){
         this.employeeRepository = employeeRepository;
         this.adminRepository = adminRepository;
         this.passwordEncoder = passwordEncoder;
         this.levelRepository = levelRepository;
+        this.angelRepository = angelRepository;
     }
 
     @Override
@@ -44,7 +46,10 @@ public class DatabaseLoader implements CommandLineRunner {
 
         this.employeeRepository.save(new Employee("John", "Gachihi", "I do not know him"));
         for(int i = 0; i < 1; i++){
-            this.adminRepository.save(new Admin("john@gmail.com", passwordEncoder.encode("1234")));
+            Admin admin = new Admin("john@gmail.com", passwordEncoder.encode("1234"));
+            admin.addRole("ADMIN");
+            admin.addRole("USER");
+            this.adminRepository.save(admin);
         }
 
         Level l = new Level();
@@ -58,7 +63,17 @@ public class DatabaseLoader implements CommandLineRunner {
                 )
         ));
 
-        levelRepository.save(l);
+        if(levelRepository.count() < 2){
+            levelRepository.save(l);
+        }
+
+        /*for(int i = 0 ; i < 11; i++){
+            Angel user = new Angel();
+            user.setUsername("john" + i);
+            user.setRegDate(new Date());
+
+            angelRepository.save(user);
+        }*/
 
        /* List<Admin> admins = this.adminRepository.findAll();
         for(Admin admin : admins){
