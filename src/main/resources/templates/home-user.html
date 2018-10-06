@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments.html :: headerfiles"></head>
+<head>
+    <link href="/css/hover-min.css" rel="stylesheet" media="all">
+</head>
+<body>
+
+<button id="button1" class="btn btn-primary hvr-wobble-vertical">Button1</button>
+<button id="button2" class="btn btn-primary">Button2</button>
+<button id="button3" class="btn btn-primary">Button3</button>
+
+<div style="width:100px; height:100px; background-color: blue;"></div>
+
+<img src="http://localhost/finalproject/edugame/dee.jpg">
+
+<script src="/dependencies/popper.min.js"></script>
+<script src="/dependencies/bootstrap.min.js"></script>
+<script src="/dependencies/howler.min.js"></script>
+<script src="/dependencies/anime.min.js"></script>
+<script type="text/javascript">
+    var csrf_token = $("meta[name='_csrf']").attr("content");
+    var csrf_header = $("meta[name='_csrf_header']").attr("content");
+
+    $(document).ajaxSend((e, xhr, settings) => {
+        xhr.setRequestHeader(csrf_header, csrf_token);
+    });
+
+    var sound = new Howl({
+        src: ['/audio/button-click.mp3', '/audio/button-click.wav']
+    });
+
+    var sound1 = new Howl({
+        src: ['http://localhost/Spellit-Media/correct-answer-bell-and-applause.mp3']
+    })
+
+    sound.play();
+
+    $("#button1").click(e => {
+        console.log("Button1 clicked");
+    });
+
+    $("#button1, #button2").click(e => {
+        sound.play();
+    });
+
+    $("#button2").click(e => {
+        console.log("Button2 clicked");
+    });
+
+    $("#button3").click(e => {
+        sound1.play();
+    });
+
+    anime({
+        targets: 'div',
+        translateX: 250,
+        translateY: 20,
+        scale: 1.3,
+        complete: (anim) => {
+            console.log(anim.completed);
+        }
+    });
+
+
+    var audioContext = new AudioContext();
+
+    var audioSource = audioContext.createBufferSource();
+
+    /*$.ajax({
+        url: "/media-content",
+        method: "post",
+        data: {filename: "answer-bell-and-applause.mp3"},
+        dataType: "blob",
+        success: (data) => {
+            console.log(typeof data);
+            console.log("al;skdjflaksdjfla;sdjfal;sfjalja;lkfjl;sdf");
+            audioContext.decodeAudioData(data, (buffer) => {
+                audioSource.buffer = buffer;
+            });
+
+            audioSource.connect(audioContext.destination);
+
+            audioSource.start(0);
+            alert("Sound sounded");
+        },
+        error: (jqXHR, status, error)=> {
+            console.log(error);
+        }
+    })*/
+
+</script>
+</body>
+</html>

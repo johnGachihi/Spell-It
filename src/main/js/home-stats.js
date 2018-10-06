@@ -1,5 +1,6 @@
 // import Chart from "chart.js";
 const Chart = require("../../../node_modules/chart.js/src/chart");
+const {Howl, Howler} = require('howler');
 
 var days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -33,6 +34,12 @@ $.ajax({
     error: (jqXHR, status, error) => {
         console.log(error);
     }
-})
+});
+
+var sound = new Howl({
+    src: ['sound.mp3']
+});
+
+sound.play()
 
 

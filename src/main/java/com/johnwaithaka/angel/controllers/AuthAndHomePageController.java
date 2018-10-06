@@ -45,7 +45,7 @@ public class AuthAndHomePageController {
         if(request.isUserInRole("ADMIN")){
             return "redirect:/home-admin/";
         } else
-            return "redirect:/user/registration";
+            return "redirect:/user/home/";
     }
 
     @GetMapping(value = "/user/registration")
@@ -83,6 +83,11 @@ public class AuthAndHomePageController {
             return null;
         }
         return angel;
+    }
+
+    @RequestMapping("/user/home")
+    public String userHome(){
+        return "home-user";
     }
 
     @RequestMapping("/temp-suc-reg")

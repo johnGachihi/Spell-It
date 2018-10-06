@@ -11,7 +11,7 @@ import java.io.IOException;
 @Service
 public class FileService {
 
-    private static final String CONTENT_DIR = "content/";
+    public static final String CONTENT_DIR = "c:/xampp/htdocs/spellit-media/content/";
 
     private File createParentFolder(){
         File p = new File(CONTENT_DIR);
