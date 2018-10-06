@@ -1,0 +1,158 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <title>Spell It</title>
+    <link rel="stylesheet" href="dependencies/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
+    <script src="dependencies/jquery-3.3.1.js"></script>
+    <link rel="stylesheet" href="fontawesome-free/css/all.min.css">
+    <link href="css/hover-min.css" rel="stylesheet" media="all">
+    <link rel="stylesheet" href=css/user-home.css>
+    <script src="dependencies/howler.min.js"></script>
+
+    <script type="text/javascript">
+        var swooshSound = new Howl({
+            src: ['audio/swoosh.mp3']
+        })
+    </script>
+</head>
+<body>
+    <!-- Hidden for now (d-none) -->
+    <div id="welcome-div" class="rounded bg-success" style="width:200px; height:250px;"></div>
+    
+    <div id="background-div"></div>
+
+    <script src="dependencies/popper.min.js"></script>
+    <script src="dependencies/bootstrap.min.js"></script>
+    <script src="dependencies/anime.min.js"></script>
+    <script type="text/javascript">
+        var $welcomeDiv = $("#welcome-div");
+        var $background = $("#background-div");
+
+        var buttonClickSound = new Howl({
+            src: ['audio/button-click.mp3', 'audio/button-click.wav']
+        });
+    
+        var applauseSound = new Howl({
+            src: ['http://localhost/Spellit-Media/correct-answer-bell-and-applause.mp3']
+        })
+
+        //Welcome animation
+        anime({
+            targets: '#welcome-div',
+            translateX: (window.innerWidth/2 - $welcomeDiv.width()/2),
+            translateY: [70, 200],
+            scale: 2,
+            duration: 1500,
+            begin: anim => {
+                swooshSound.play();
+            },
+            complete: (anim) => {
+
+            }
+        });
+
+        //Background animation
+        var bgImages = [
+            "color-balls.jpg",
+            "animals.png",
+            "my post.jpg",
+            "party.jpg"
+        ]
+        function bgAnimation(){
+            anime({
+                targets: "#background-div",
+                delay: 5000,
+                duration: 1000,
+                translateX: window.innerWidth,
+                easing: "easeOutQuad"
+            });
+            $background.css({backgroundImage: "linear-gradient(to top rgb(0,0,0,0.2), rgb(0,0,0,0.2)), url(media/" + bgImages[0] + ")"});
+            let firstImage = bgImages.shift();
+            bgImages.push(firstImage);
+            console.log(bgImages) //temp
+            anime({
+                targets: "#background-div",
+                delay: 0,
+                duration: 1000,
+                translateX: [-window.innerWidth, 0],
+                // easing: "easeInQuad"
+            })
+        }
+
+        setInterval(bgAnimation, 5000);
+
+        // var t_points = [0, window.innerWidth];
+        // var t_points1 = [-window.innerWidth, 0]
+        // var animeA = anime({
+        //     targets: "#background-div",
+        //     delay: 5000,
+        //     duration: 1000,
+        //     translateX: t_points,
+        //     easing: "easeOutQuad",
+        //     update: () => {console.log("AnimeA in action")},
+        //     begin: anim => {
+        //         var animeB = anime({
+        //             targets: "#background-div",
+        //             duration: 1000,
+        //             translateX: t_points1,
+        //             easing: "easeOutQuad",
+        //             update: () => {console.log("AnimeA in action")},
+        //             complete: anim => {
+        //                 t_points.reverse();
+        //                 t_points1.reverse();
+        //                 animeA.play();
+        //             }
+        //         });
+        //         animeB.play();
+        //     }
+        // });
+        // animeA.play();
+        // anime({
+        //     targets: "#background-div",
+        //     translateX:  window.innerWidth,
+        //     duration: 1000,
+        //     delay: 5000,
+        //     easing: "easeOutQuad",
+        //     complete: (anim) => {
+        //         anime({
+        //             targets: "#background-div",
+        //             translateX: 0,
+        //             delay: 1000,
+        //             duration: 2000,
+        //             easing: "easeInQuad",
+        //             complete: (anime) => {
+
+        //             }
+        //         })
+        //         anim.reverse();
+        //     },
+        //     loop: true
+        // });
+
+        // anime({
+        //     targets: '#background-div',
+        //     translateX: [
+        //         {
+        //             value: window.innerWidth,
+        //             duration: 1000,
+        //             delay: 5000,
+        //             easing: "easeOutQuad",
+        //             complete: (anime) => {
+        //                 console.log("BG out");
+        //             }
+        //         },
+        //         {
+        //             value: [-window.innerWidth, 0],
+        //             duration: 1000,
+        //             delay: 0,
+        //             easing: "easeOutQuad"
+        //         }
+        //     ],
+        //     loop: true
+        // })
+</script>    
+</body>
+</html>
