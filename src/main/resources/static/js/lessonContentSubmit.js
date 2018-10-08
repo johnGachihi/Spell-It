@@ -107,4 +107,6 @@ $addLevelBtn.click(e => {
         processData: false,
         dataType: "json"
     })
+
+    window.location = "/edit-content"
 });
