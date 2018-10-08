@@ -40,6 +40,7 @@ public class AngelService {
             throw new UsernameExistsException("Username exists");
         Angel angel = new Angel();
         angel.setUsername(angelDTO.getUsername());
+        angel.setName(angelDTO.getName());
         angel.setPassword(passwordEncoder.encode(angelDTO.getPassword()));
         angel.setRegDate(new Date());
         angel.addRole(UserRoles.USER);
@@ -50,5 +51,9 @@ public class AngelService {
     private boolean usernameExists(AngelDTO angelDTO){
         Optional<Angel> o = angelRepository.findByUsername(angelDTO.getUsername());
         return o.isPresent();
+    }
+
+    public Optional<Angel> findByUsername(String username){
+        return angelRepository.findByUsername(username);
     }
 }

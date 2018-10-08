@@ -18,6 +18,7 @@ public class Angel {
     String levelId;
     double aggregateScore;
     Date regDate;
+    String name;
     List<String> roles;
 
     public String getUsername() {
@@ -67,5 +68,13 @@ public class Angel {
             roles = new ArrayList<>();
 
         roles.add(role);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
