@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="/css/styles.css">
     <script src="/dependencies/jquery-3.3.1.js"></script>
     <link rel="stylesheet" href="/fontawesome-free/css/all.min.css">
+    <script src="/dependencies/anime.min.js"></script>
     <script type="text/javascript">
         function onDropHandler(e) {
             console.log("Items dropped");
@@ -265,7 +266,27 @@
                                                 <input id="wordImage" type="file" name="wordImage">
 
                                                 <label for="wordPhonetic">Insert phonetics of the word</label>
-                                                <input id="wordPhonetic" type="file" name="wordPhonetic">
+                                                <!--<input id="wordPhonetic" type="file" name="wordPhonetic">-->
+                                                <div class="my-2 position-relative">
+                                                    <div id="audio-input-choice" class="btn-group" style="z-index: 2;">
+                                                        <button id="insertFileOption" class="btn btn-primary">Insert File</button>
+                                                        <button id="recordOption" class="btn btn-primary">Record</button>
+                                                    </div>
+                                                    <!-- Manual file input -->
+                                                    <div id="filename-div" style="position: absolute; top: 0; left: 0; display: inline; z-index: 1;">
+                                                        <!-- <span>No file selected</span> -->
+                                                        <input id="wordPhonetic" type="file">
+                                                    </div>
+                                                    <!-- Record Buttons -->
+                                                    <div id="record-controls" style="position: absolute; top: 0; left: 0; display: inline; z-index: 1;">
+                                                        <a id="recordBtn" class="btn btn-primary fa fa-microphone text-light">
+                                                            <span style=""></span>
+                                                        </a>
+                                                        <a id="stopRecordBtn" class="btn btn-primary fa fa-stop text-light">
+                                                            <span style=""></span>
+                                                        </a>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <button id="lessonContentSubmit" class="btn btn-primary">Submit</button>
                                         </form>
@@ -350,10 +371,6 @@
                 </form>-->
             </div>
 
-            <div id="testerDiv">
-                <img id="imaage" src="#" alt="Image Image">
-            </div>
-
             </div>
             <!--Modal-->
 
@@ -371,6 +388,7 @@
 
 <script src="/dependencies/popper.min.js"></script>
 <script src="/dependencies/bootstrap.min.js"></script>
+<script src="/dependencies/audio-record/WebAudioRecorder.js"></script>
     <script type="text/javascript">
     $(document).ready(() => {
 
@@ -441,7 +459,9 @@
 
             console.log("clicked");
 
-            $("#addLessonArea").toggle();
+            $("#addLessonArea").toggle(() => {
+                setUpPoints();
+            });
         });
 
         $("#checkpointImageUpload").on("click", (e) => {
@@ -456,8 +476,11 @@
         });
     });
 
+
+
 </script>
     <script src="/js/lessonContentSubmit.js"></script>
+<script src="/js/audioInput.js"></script>
 
 </body>
 </html>
