@@ -21,7 +21,7 @@
 </head>
 <body>
 <!--To access model data in javascript--> <!--Check out Elvis operator-->
-<input id="angel-name" type="hidden" th:value="${Angel.name == null} ?: 'Admin'">
+<input id="angel-name" type="hidden" th:value="${Angel != null} ? (${Angel.name}?: 'Admin') : 'Admin'">
 
 <div id="background-div"></div>
 
