@@ -279,12 +279,16 @@
                                                     </div>
                                                     <!-- Record Buttons -->
                                                     <div id="record-controls" style="position: absolute; top: 0; left: 0; display: inline; z-index: 1;">
-                                                        <a id="recordBtn" class="btn btn-primary fa fa-microphone text-light">
+                                                        <a id="recordBtn" class="btn btn-primary fa fa-microphone text-light" data-toggle="collapse" href="#audioVisualizer">
                                                             <span style=""></span>
                                                         </a>
-                                                        <a id="stopRecordBtn" class="btn btn-primary fa fa-stop text-light">
+                                                        <a id="stopRecordBtn" class="btn btn-primary fa fa-stop text-light" data-toggle="collapse" href="#audioVisualizer">
                                                             <span style=""></span>
                                                         </a>
+                                                        <a id="playRecordingBtn" class="btn btn-primary fa fa-play text-light"></a>
+                                                    </div>
+                                                    <div id="audioVisualizer" class="collapse">
+                                                        <canvas id="canvas" class="mt-2 rounded" style="width: 400px; height: 38px;"></canvas>
                                                     </div>
                                                 </div>
                                             </div>

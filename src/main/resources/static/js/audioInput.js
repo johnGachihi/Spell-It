@@ -5,13 +5,16 @@
     var $recordOption = $("#recordOption");
     var $recordBtn = $("#recordBtn");
     var $stopRecordBtn = $("#stopRecordBtn");
+    var $playRecordingBtn = $("#playRecordingBtn");
 
     var revealPoints;
     var concealPoints;
 
+    //Sets up translation points
+    //This can only happen when addLessonArea is displayed by clicking the addLesson button.
     function setUpPoints() {
         revealPoints = [0, $audioInputChoice.width() + 30];
-        concealPoints = [$audioInputChoice.width() + 30, 0];
+        concealPoints = [$audioInputChoice.width() + 30, $audioInputChoice.width() - $("#wordPhonetic").width()];
         revealAnimation("#filename-div", true, [0, $audioInputChoice.width() + 30]);
     }
     $recordOption.css("backgroundColor", "rgb(0, 70, 140)");
@@ -23,7 +26,7 @@
             $insertFileOption.css("backgroundColor", "");
             $recordOption.css("backgroundColor", "rgb(0, 70, 140)");
 
-            revealAnimation("#record-controls", true, [$audioInputChoice.width() + 30, 0])
+            revealAnimation("#record-controls", true, concealPoints)
                 .finished.then(r => {
                 revealAnimation("#filename-div", true, [0, $audioInputChoice.width() + 30]);
             });
@@ -38,7 +41,7 @@
             $recordOption.css("backgroundColor", "");
             $insertFileOption.css("backgroundColor", "rgb(0, 70, 140)");
 
-            revealAnimation("#filename-div", true, [$audioInputChoice.width() + 30, 0])
+            revealAnimation("#filename-div", true, concealPoints)
                 .finished.then(r => {
                 revealAnimation("#record-controls", true, [0, $audioInputChoice.width() + 30]);
             });
@@ -60,6 +63,12 @@
     var input;
     var encodingType = "mp3";
     var audioContext = new AudioContext();
+    var analyser = audioContext.createAnalyser();
+
+    var canvas = document.getElementById("canvas");
+    var canvasCtx = canvas.getContext("2d");
+    var WIDTH = canvas.width;
+    var HEIGHT = canvas.height;
 
     var audioFile;
 
@@ -68,6 +77,34 @@
         navigator.mediaDevices.getUserMedia(constraints).then(stream => {
             audio_stream = stream;
             input = audioContext.createMediaStreamSource(stream);
+
+            input.connect(analyser);
+            analyser.fftSize = 256;
+            var bufferLength = analyser.frequencyBinCount;
+            var dataArray = new Uint8Array(bufferLength);
+            canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
+            function draw(){
+                requestAnimationFrame(draw);
+                analyser.getByteFrequencyData(dataArray);
+
+                canvasCtx.fillStyle = "#007bff";
+                canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
+
+                var barWidth = (WIDTH/bufferLength) * 2;
+                var barHeight;
+                var x = 0;
+
+                for(var i=0; i<bufferLength; i++){
+                    barHeight = dataArray[i]/2;
+
+                    canvasCtx.fillStyle = "#fff";
+                    canvasCtx.fillRect(x, HEIGHT-barHeight/2, barWidth, barHeight);
+
+                    x += barWidth + 1;
+                }
+            }
+            draw();
+
             input.connect(audioContext.destination);
             recorder = new WebAudioRecorder(input, {
                 workerDir: "/dependencies/audio-record/",
@@ -102,6 +139,16 @@
     $stopRecordBtn.click(e => {
         audio_stream.getAudioTracks()[0].stop();
         recorder.finishRecording();
+    });
+
+    $playRecordingBtn.click(e => {
+        var audio = new Audio();
+        audio.src = URL.createObjectURL(audioFile);
+        audio.play().then(r => {
+            console.log("RECORDED AUDIO FINISHED");
+        }).catch(err => {
+            console.log(err);
+        });
     });
 
     var $wordPhonetic = $("#wordPhonetic");
