@@ -1,7 +1,5 @@
 package com.johnwaithaka.angel;
 
-import com.johnwaithaka.angel.Utility.BinarySearch;
-import com.johnwaithaka.angel.entities.Admin;
 import com.johnwaithaka.angel.entities.Lesson;
 import com.johnwaithaka.angel.entities.Level;
 import com.johnwaithaka.angel.entities.Word;
@@ -11,13 +9,19 @@ import com.johnwaithaka.angel.repositories.AngelRepository;
 import com.johnwaithaka.angel.repositories.LevelRepository;
 import static org.junit.Assert.assertArrayEquals;
 
+import com.johnwaithaka.angel.repositories.PhoneticRepository;
 import com.johnwaithaka.angel.services.AngelService;
+import com.johnwaithaka.angel.services.FileService;
+import com.johnwaithaka.angel.services.PhoneticService;
 import org.bson.types.ObjectId;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import static org.mockito.Mockito.*;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.*;
@@ -34,6 +38,12 @@ public class AngelApplicationTests {
     private AngelRepository angelRepository;
     @Autowired
     private AngelService angelService;
+    @MockBean
+    private PhoneticRepository phoneticRepository;
+    @InjectMocks
+    private PhoneticService phoneticService;
+    @Autowired
+    private FileService fileService;
 
     @Test
     public void contextLoads() {
@@ -97,5 +107,25 @@ public class AngelApplicationTests {
         List<Integer> actual = angelService.getRegistrationDateCountData();
 
         Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testGetAllAbsentText(){
+        PhoneticRepository phoneticRepository = mock(PhoneticRepository.class);
+        when(phoneticRepository.existsByText("a")).thenReturn(true);
+        when(phoneticRepository.existsByText("b")).thenReturn(true);
+        when(phoneticRepository.existsByText("c")).thenReturn(true);
+
+        PhoneticService phoneticService = new PhoneticService(phoneticRepository, fileService);
+
+        List<String> actual = phoneticService.getAllAbsentText(
+                Arrays.asList("a", "b", "c", "d", "e", "f", "g")
+        );
+
+        List<String> expected = Arrays.asList("d", "e", "f", "g");
+
+
+        Assert.assertArrayEquals(expected.toArray(), actual.toArray());
+
     }
 }
