@@ -2,7 +2,7 @@ package com.johnwaithaka.angel.DTOs;
 
 import com.johnwaithaka.angel.entities.Angel;
 
-public class RegistrationResponse {
+public class Response {
     boolean error;
     String errorMessage;
     Angel angel;
