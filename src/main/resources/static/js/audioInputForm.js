@@ -142,9 +142,9 @@ class PhoneticInput extends React.Component{
 
 class PhoneticInputForm extends React.Component {
     render() {
-        console.log(this.props.absentees);
-        var set = new Set(this.props.absentees);
-        var texts = Array.from(set);
+        console.log("PhoneticInputForm, this.props.absentees", this.props.absentees);
+        let set = new Set(this.props.absentees);
+        let texts = Array.from(set);
         return (
             <PoseGroup>
                 {texts.map((t, i) => {
